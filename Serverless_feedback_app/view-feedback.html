@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feedback Viewer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .feedback-list {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .feedback-item {
+      border-bottom: 1px solid #ccc;
+      padding: 12px 0;
+    }
+    .feedback-item:last-child {
+      border-bottom: none;
+    }
+    .name {
+      font-weight: bold;
+      color: #0073aa;
+    }
+    .message {
+      margin-top: 4px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h2>All Feedback Received</h2>
+  <div class="feedback-list" id="feedbackList">
+    <p>Loading feedback...</p>
+  </div>
+
+ <script>
+  const apiUrl = 'https://2j97cz1edf.execute-api.us-east-1.amazonaws.com/prod/feedback';
+
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById('feedbackList');
+      container.innerHTML = '';
+
+      if (Array.isArray(data)) {
+        data.forEach(item => {
+          container.innerHTML += `
+            <div class="feedback-item">
+              <div class="name">${item.name}</div>
+              <div class="message">${item.feedback}</div>
+            </div>
+          `;
+        });
+      } else {
+        container.innerHTML = '<p style="color:red;">Unexpected response format</p>';
+      }
+    })
+    .catch(error => {
+      document.getElementById('feedbackList').innerHTML = `<p style="color:red;">Error loading feedback: ${error}</p>`;
+      console.error('Error:', error);
+    });
+</script>
+
+</body>
+</html>
